@@ -12,10 +12,12 @@ const SwipePayment: React.FC = () => {
 
   const circleWidth = 56;
 
+  // Start Drag
   const startDrag = () => {
     setDragging(true);
   };
 
+  // Stop Drag
   const stopDrag = () => {
 
     setDragging(false);
@@ -23,14 +25,13 @@ const SwipePayment: React.FC = () => {
     const containerWidth =
       containerRef.current?.offsetWidth || 0;
 
-    const maxSwipe = containerWidth - circleWidth - 8;
+    const maxSwipe =
+      containerWidth - circleWidth - 8;
 
     if (position >= maxSwipe - 10) {
 
-      // ✅ Alert message
       alert("Booking Confirmed ✅");
 
-      // Redirect
       navigate("/payment");
 
     } else {
@@ -40,15 +41,42 @@ const SwipePayment: React.FC = () => {
     }
   };
 
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Mouse Move
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
 
     if (!dragging) return;
 
-    const rect = containerRef.current?.getBoundingClientRect();
+    const rect =
+      containerRef.current?.getBoundingClientRect();
 
     if (!rect) return;
 
-    let newX = e.clientX - rect.left - 28;
+    let newX =
+      e.clientX - rect.left - 28;
+
+    const maxSwipe =
+      rect.width - circleWidth - 8;
+
+    if (newX < 0) newX = 0;
+    if (newX > maxSwipe) newX = maxSwipe;
+
+    setPosition(newX);
+  };
+
+  // Touch Move (Mobile)
+  const handleTouchMove = (
+    e: React.TouchEvent<HTMLDivElement>
+  ) => {
+
+    const rect =
+      containerRef.current?.getBoundingClientRect();
+
+    if (!rect) return;
+
+    let newX =
+      e.touches[0].clientX - rect.left - 28;
 
     const maxSwipe =
       rect.width - circleWidth - 8;
@@ -63,22 +91,25 @@ const SwipePayment: React.FC = () => {
 
     <div
       className="flex justify-center items-center h-screen"
-      onMouseMove={handleMove}
+      onMouseMove={handleMouseMove}
       onMouseUp={stopDrag}
+      onTouchEnd={stopDrag}
     >
 
       <div
         ref={containerRef}
-        className="w-80 h-16 bg-red-500 rounded-full relative shadow-lg overflow-hidden"
+        className="w-80 h-16 bg-gray-200 rounded-full relative shadow-lg"
       >
 
-        <p className="absolute inset-0 flex items-center justify-center font-semibold text-white">
-          Swipe To Confirm Booking →
+        <p className="absolute inset-0 flex items-center justify-center font-semibold">
+          Swipe To Confirm →
         </p>
 
         <div
           onMouseDown={startDrag}
-          className="w-14 h-14 bg-white rounded-full absolute top-1 cursor-pointer flex items-center justify-center text-black  transition-all duration-200"
+          onTouchStart={startDrag}
+          onTouchMove={handleTouchMove}
+          className="w-14 h-14 bg-green-500 rounded-full absolute top-1 cursor-pointer flex items-center justify-center text-white transition-all duration-200"
           style={{ left: position }}
         >
           →
