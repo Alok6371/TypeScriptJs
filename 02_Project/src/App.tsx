@@ -1,5 +1,7 @@
 // import AddTodo from "./Componets/AddTodo";
+import { Routes, Route } from "react-router-dom";
 import SwipePayment from "./Componets/SwipeForPayment";
+import AddTodo from "./Componets/AddTodo";
 
 const App = () => {
   return (
@@ -7,8 +9,11 @@ const App = () => {
       <h1 className="text-blue-500 uppercase text-3xl m-3">
         TODO React + TypeScript
       </h1>
-      {/* <AddTodo /> */}
-      <SwipePayment />
+
+      <Routes>
+        <Route path="/" element={<SwipePayment />} />
+        <Route path="/payment" element={<AddTodo />} />
+      </Routes>
     </main>
   );
 };
